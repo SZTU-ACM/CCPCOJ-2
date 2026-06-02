@@ -41,7 +41,7 @@
 - 管理员登录：在左侧菜单栏任意空白区域快速三击鼠标，打开管理员登录框。
 - 比赛内登录：进入比赛主页后，在公告区域使用比赛内账号登录。
 
-![alt text](<img/Frame 1.png>)
+![alt text](<user_doc_image/Frame 1.png>)
 
 ### 2.2 常见角色速查
 
@@ -62,7 +62,7 @@
 在后台添加比赛时，比赛类型请选择 **Standard**。
 
 
-![alt text](<img/Frame 2.png>)
+![alt text](<user_doc_image/Frame 2.png>)
 
 
 #### 获奖比例设置规则
@@ -82,9 +82,9 @@
 3. 上传图片附件。
 4. 使用上传列表中复制出的相对路径插入题面，不需要额外补 URL。
 
-![alt text](<img/Frame 3.png>)
+![alt text](<user_doc_image/Frame 3.png>)
 
-![alt text](<img/Frame 4.png>)
+![alt text](<user_doc_image/Frame 4.png>)
 
 #### LaTeX 题面格式
 
@@ -108,7 +108,7 @@ __LATEX__
 4. 解析完成后，勾选需要导出的题目。
 5. 点击 **Pack Selected To CSGOJ**，生成 CSGOJ 可导入的题目包。
 
-![alt text](<img/Frame 11.png>)
+![alt text](<user_doc_image/Frame 11.png>)
 
 #### Special Judge 开关
 
@@ -221,7 +221,7 @@ int main(int argc, char** argv) {
 
 进入页面后点击 **Help** 查看导入格式。建议先按模板整理 Excel 或表格，再导入比赛。
 
-![alt text](<img/Frame 5.png>)
+![alt text](<user_doc_image/Frame 5.png>)
 
 #### 方式二：结合抽签流程导入
 
@@ -257,7 +257,7 @@ http://[OJ地址]/ojtool/seatdraw
 6. 管理员将抽签结果导入对应比赛。
 7. 承办方按单位序导出抽签结果，并发布给参赛队伍，便于队伍找座位。
 
-![alt text](<img/Frame 6.png>)
+![alt text](<user_doc_image/Frame 6.png>)
 
 ### 3.7 封装与分发密码
 
@@ -299,7 +299,7 @@ http://[OJ地址]/ojtool/seatdraw
 4. 管理员赛前将工作人员账号交给承办方。
 5. 承办方将账号分发给对应志愿者。
 
-![alt text](<img/Frame 7.png>)
+![alt text](<user_doc_image/Frame 7.png>)
 
 补充建议：
 
@@ -318,7 +318,7 @@ http://[OJ地址]/ojtool/seatdraw
 - 一个 printer 账号。
 - 一套清晰的打印区域或任务分工。
 
-![alt text](<img/Frame 8.png>)
+![alt text](<user_doc_image/Frame 8.png>)
 
 操作建议：
 
@@ -338,7 +338,7 @@ http://[OJ地址]/ojtool/seatdraw
 
 在必要时，管理员也可以点击某个气球任务，在弹窗中将任务分配给指定 `balloon_sender`。
 
-![alt text](img/气球队列.png)
+![alt text](<user_doc_image/气球队列.png>)
 
 #### 模式二：标记模式 Task Finish Mode
 
@@ -403,7 +403,7 @@ http://[OJ地址]/ojtool/seatdraw
 
 承办方可基于导出的获奖信息表继续处理证书、奖牌、新闻稿和归档材料。
 
-![alt text](<img/Frame 9.png>)
+![alt text](<user_doc_image/Frame 9.png>)
 
 ### 5.2 滚榜颁奖 RankRoll
 
@@ -416,7 +416,7 @@ http://[OJ地址]/ojtool/seatdraw
 3. 点击 **RankRoll** 进入滚榜页面。
 4. 全屏展示并按现场流程开始滚榜。
 
-![alt text](<img/Frame 12.png>)
+![alt text](<user_doc_image/Frame 12.png>)
 
 #### 队伍照片
 

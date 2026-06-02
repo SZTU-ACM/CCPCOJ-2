@@ -338,7 +338,7 @@ http://[OJ地址]/ojtool/seatdraw
 
 在必要时，管理员也可以点击某个气球任务，在弹窗中将任务分配给指定 `balloon_sender`。
 
-![alt text](user_doc_image/气球队列.png)
+![alt text](<user_doc_image/气球队列.png>)
 
 #### 模式二：标记模式 Task Finish Mode
 
