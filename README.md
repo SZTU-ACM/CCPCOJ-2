@@ -28,7 +28,7 @@ CCPCOJ 用来办 ICPC / CCPC 标准赛。一场比赛从建赛、题目、队伍
 本仓库是使用说明和部署程序。站点以安装包发布，这里没有源码。部署程序只提供 Linux x86_64。
 
 <p align="center">
-  <img src="doc/images/home-frame.png" alt="比赛站首页" width="880">
+  <img src="doc/images/home-hero.png" alt="比赛站首页" width="880">
 </p>
 
 <p align="center"><sub>运行中的比赛站</sub></p>
