@@ -1,8 +1,8 @@
-# CCPCOJ / CSGOJ 组织 XCPC 比赛操作手册
+# CCPCOJ 组织 XCPC 比赛操作手册
 
-用 CCPCOJ / CSGOJ 办一场 XCPC 标准赛：建比赛、导题、生成账号、抽签、打印、气球、直播、获奖导出、滚榜。
+用 CCPCOJ 办一场 **XCPC 标准赛**（比赛系统 `cpcsys` / `cpc`）：建比赛、导题、生成账号、抽签、打印、气球、直播、获奖导出、滚榜。
 
-原文：<https://github.com/CSGrandeur/CCPCOJ/blob/master/doc/user_doc.md>
+本文只覆盖比赛系统用法，不含其它运行模式。
 
 ## 目录
 

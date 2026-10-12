@@ -1,18 +1,23 @@
-# CSGOJ 一键部署
+# CCPCOJ 部署（比赛系统）
 
-用 `csgoj_deploy.sh` 部署。第一个参数指定类型：
+本文说明如何用部署工具 `csgoj-deploy` 部署 **XCPC 比赛系统**：先部署 Web（含 MySQL、Nginx、phpMyAdmin），在网页里完成初始化并创建评测机账号，再部署评测机。
 
-- `web`：Web 服务（MySQL、Nginx、PHP、phpMyAdmin）
-- `judge`：评测机
-
-先部署 Web，在后台配好评测机账号后，再部署 Judge。
+- 运行模式固定为 `cpcsys`（比赛系统）、状态 `cpc`。
+- Web 与评测机可以同机，也可以分开；评测机机器同样使用 `csgoj-deploy`。
+- 下文命令都在 Linux 终端中执行，`mycpc`、端口、口令请换成你自己的。
 
 ## 1. 部署前准备
 
-### 1.1 环境
+### 1.1 机器要求
 
-- 系统：Ubuntu 22.04 或更高。Judge 节点脚本会检查系统版本。
-- Ubuntu 22.04 若仍是 5.15 内核，Judge 可能起不来，先把 HWE 内核升到 5.19 以上：
+| 项目 | 要求 |
+| --- | --- |
+| 系统 | Ubuntu 22.04 / 24.04 / 26.04（x86_64 或 arm64） |
+| 内核 | 评测机需要 5.19 以上（Ubuntu 24.04 起自带；22.04 见下） |
+| CPU / 内存 | 每个评测容器使用 4 核 4GB（另有 1GB 共享内存）。单机试用 4 核 8GB 起；正式比赛按评测容器数量配机器 |
+| 网络 | 能访问腾讯云镜像仓库或 Docker Hub；评测机要能访问 Web 的地址和端口 |
+
+Ubuntu 22.04 若仍是 5.15 内核，先升级 HWE 内核再部署评测机：
 
 ```bash
 sudo apt-get update
@@ -20,341 +25,168 @@ sudo apt-get install -y linux-generic-hwe-22.04
 sudo reboot
 ```
 
-- Web 节点会自动装 Docker；已经装过则直接用现有环境。
-- 当前用户需要 `sudo`。
-- 服务器要能拉到 Docker 镜像。
-
-### 1.2 准备脚本
-
-把发布包里的脚本放到服务器，例如：
+### 1.2 安装 Docker
 
 ```bash
-mkdir -p /opt/csgoj
-cd /opt/csgoj
-# 将 csgoj_deploy.sh 上传到此目录
-chmod +x csgoj_deploy.sh
+sudo apt-get update
+sudo apt-get install -y docker.io
+sudo systemctl enable --now docker
+sudo docker info
 ```
 
-数据目录用固定绝对路径，例如 `/csgoj_data`。备份、迁移、排障都对着这个目录做。
+`docker info` 能输出服务端信息即可。下文命令都用 `sudo` 执行；如想不加 `sudo`，执行 `sudo usermod -aG docker $USER` 后重新登录。
 
-## 2. 部署步骤
+### 1.3 下载部署工具
 
-### 2.1 部署 Web
-
-正式环境把参数写全：
+到本仓库 [Releases](https://github.com/SZTU-ACM/CCPCOJ-2/releases) 下载对应平台的 `csgoj-deploy`，例如 x86_64 机器：
 
 ```bash
-PORT_OJ=20080
-PORT_MYADMIN=20050
-PATH_DATA=/csgoj_data
-OJ_NAME=hbcpc
-
-bash csgoj_deploy.sh web \
-    --noninteractive \
-    --PATH_DATA="$PATH_DATA" \
-    --OJ_NAME="$OJ_NAME" \
-    --OJ_MODE=cpcsys \
-    --PORT_OJ="$PORT_OJ" \
-    --PORT_MYADMIN="$PORT_MYADMIN" \
-    --PORT_DB=20006 \
-    --PASS_SQL_ROOT="<MySQL-root-密码>" \
-    --PASS_SQL_USER="<MySQL-业务用户密码>" \
-    --PASS_MYADMIN_PAGE="<phpMyAdmin-页面密码>"
+mkdir -p ~/csgoj && cd ~/csgoj
+# 把 <版本号> 换成 Releases 页面上的版本，例如 2.0.268
+wget -O csgoj-deploy https://github.com/SZTU-ACM/CCPCOJ-2/releases/download/<版本号>/csgoj-deploy_<版本号>_linux_amd64
+chmod +x csgoj-deploy
+./csgoj-deploy version
 ```
 
-本地试跑可以用脚本默认值。不交互部署时加 `--noninteractive`：
+arm64 机器下载 `..._linux_arm64`。无法直接访问 GitHub 时，可在别的电脑下载后用 `scp` 传到服务器。
+
+### 1.4 镜像从哪里来
+
+部署工具自动拉取镜像，**先试腾讯云公开仓库**，不可用时再用 Docker Hub：
+
+| 用途 | Docker Hub | 腾讯云 |
+| --- | --- | --- |
+| Web | `csgrandeur/ccpcoj-web2:<版本>` | `ccr.ccs.tencentyun.com/csgrandeur/ccpcoj-web2:<版本>` |
+| 评测机 | `csgrandeur/ccpcoj-judge2:<版本>` | `ccr.ccs.tencentyun.com/csgrandeur/ccpcoj-judge2:<版本>` |
+
+MySQL、Nginx、Redis、phpMyAdmin 等依赖镜像同样按这个顺序拉取。`--csgoj-version` 不写时用 `latest`；正式比赛建议写明版本号，Web 与评测机用同一个版本。
+
+## 2. 部署 Web
 
 ```bash
-bash csgoj_deploy.sh web
-bash csgoj_deploy.sh web --noninteractive
+cd ~/csgoj
+sudo ./csgoj-deploy up --noninteractive \
+    --path-data /csgoj_data \
+    --nginx-ranges 20000-20099 \
+    --site mycpc:20080:cpcsys:cpc \
+    --port-myadmin 20050 \
+    --port-db 0 \
+    --sql-root '<MySQL-root-口令>' \
+    --sql-user-pass '<MySQL-业务口令>' \
+    --myadmin-pass '<phpMyAdmin-页面口令>' \
+    --csgoj-version latest
 ```
 
-首次运行且未加 `--noninteractive` 时，脚本会交互询问配置。完成后访问：
+参数含义：
+
+| 参数 | 说明 |
+| --- | --- |
+| `--path-data` | 数据目录（绝对路径）。数据库、题目数据、日志都在这里，备份与迁移对着它操作 |
+| `--nginx-ranges` | Nginx 对外开放的端口段。站点端口和 phpMyAdmin 端口都要落在段内 |
+| `--site` | 站点，格式 `名称:端口:cpcsys:cpc`。名称只用字母数字，会成为容器名 `php-名称` |
+| `--port-myadmin` | phpMyAdmin 端口 |
+| `--port-db` | MySQL 在宿主机上的端口；`0` 表示不对外开放（推荐） |
+| `--sql-root` / `--sql-user-pass` / `--myadmin-pass` | 口令，**必须自己设置**，建议只用字母和数字 |
+| `--csgoj-version` | 镜像版本，默认 `latest` |
+
+首次部署要拉取镜像，耗时取决于网络。完成后用浏览器打开：
 
 ```text
 http://<服务器IP或域名>:20080
 ```
 
-第一次打开页面会引导设置：
+若无法打开，检查云服务器安全组 / 防火墙是否放行了该端口。
 
-- 系统管理员账号
-- 评测机账号和密码
+首次启动时 Web 容器要把静态文件（样式、图标、脚本）初始化到数据目录，配置较低的机器上大约需要一分钟；这段时间页面可能缺样式或图标，稍等刷新即可。
 
-评测机账号设好后，到 Web 后台复制评测机部署命令（或参数），用来部署 Judge。
+### 2.1 网页初始化
 
-### 2.2 部署评测机
+首次打开页面会进入初始化向导：
 
-评测机可以和 Web 同机，也可以另开机器。`CSGOJ_SERVER_BASE_URL` 必须是评测机**容器内**能访问到的 Web 地址，不要写 `localhost` 或 `127.0.0.1`。
+1. 设置**系统管理员**账号和口令（用户名 5–20 位字母、数字或下划线），点「初始化系统」，在提示框点「确定」；
+2. 页面跳转到「评测机管理」（之后也可从 管理后台 → 评测机 进入）。在「评测机列表」上方填好评测机口令和账号前缀（如 `judger`），点旁边的添加按钮，列表里会出现新账号（如 `ju01`）。
 
-```bash
-bash csgoj_deploy.sh judge \
-    --OJ_NAME=hbcpc \
-    --PATH_DATA=/csgoj_data \
-    --CSGOJ_SERVER_BASE_URL=http://<Web服务器IP或域名>:20080 \
-    --CSGOJ_SERVER_USERNAME=<评测机账号> \
-    --CSGOJ_SERVER_PASSWORD=<评测机密码> \
-    --JUDGE_POD_COUNT=1
-```
+后台「用户生成」中创建评测机账号时，可参考：
 
-临时绑核可以加：
+![评测机账号生成](deploy_doc_image/user_gen_judger.png)
+
+## 3. 部署评测机
+
+在「评测机管理」列表中，**双击**该评测机那一行的连接状态图标（或单击图标打开登录日志，再点里面的「复制部署命令」按钮），部署命令会复制到剪贴板，类似：
 
 ```bash
---CPUSET_CPUS=0-3
+sudo ./csgoj-deploy judge \
+    --server-url http://<Web服务器IP或域名>:20080 \
+    --username <评测机账号> \
+    --password '<评测机口令>' \
+    --oj-name <评测机账号> \
+    --pods 1
 ```
 
-`CPUSET_CPUS` 会让所有评测机 pod 用同一段 CPU，只适合试跑或单 pod。多 pod 正式部署让脚本自己分配即可。
+到评测机器上（可以就是 Web 服务器），进入放 `csgoj-deploy` 的目录（如 `~/csgoj`）粘贴执行。注意：
 
-后台双击评测机配置，可以复制启动脚本：
+- `--server-url` 必须是评测机能访问到的地址。复制出来的是你浏览器里的地址；若浏览器用的是 `localhost` / `127.0.0.1`，请改成服务器的局域网 IP 或域名（工具会拒绝 localhost）。
+- Web 指定了版本时，在命令末尾加同样的 `--csgoj-version <版本>`。
+- `--pods` 是评测容器数量，每个占 4 核 4GB（外加 1GB 共享内存），工具会按机器 CPU 自动绑核；机器不够时会提示最多能开几个。内存不足 4GB 的机器工具会直接拒绝，这时把评测机放到另一台机器上即可（Web 与评测机可以分开部署）。
 
-![image](https://docimg1.docs.qq.com/image/AgAABTXOtMPQOJfht0dCaYP65rtP9Cht.png?w=597&h=582)
+几十秒后回到「评测机管理」，评测机状态变为在线即可。
 
-## 3. 部署后检查
-
-### 3.1 查看容器
+## 4. 部署后检查
 
 ```bash
-docker ps
+sudo docker ps
 ```
 
-Web 部署成功后一般会有：
+Web 侧容器：`db`、`csgoj-redis`、`myadmin`、`nginx-server`、`php-mycpc`；评测机：`judge-<名称>`，多个时为 `judge-<名称>-1`、`judge-<名称>-2` …
 
-- `db`
-- `myadmin`
-- `php-<OJ_NAME>`
-- `nginx-server`
-
-Judge 部署成功后一般会有：
-
-- 单 pod：`judge-<OJ_NAME>`
-- 多 pod：`judge-<OJ_NAME>-0`、`judge-<OJ_NAME>-1` 等
-
-### 3.2 查看日志
-
-Web：
+查看日志：
 
 ```bash
-docker logs php-hbcpc
-docker logs nginx-server
-docker logs db
+sudo docker logs php-mycpc
+sudo docker logs nginx-server
+sudo docker logs -f judge-<名称>
 ```
 
-评测机：
+评测机文件日志在 `/csgoj_data/var/log/judger/`。
+
+最后走一遍办赛流程确认评测正常（具体操作见用户文档）：
+
+1. 管理后台 → 题目 → 添加题目，保存后在该题的「评测数据」里上传 `1.in` / `1.out`；
+2. 管理后台 → 比赛 → 添加比赛，填好时间并加入这道题；新建的比赛默认是**隐藏**的，要在比赛列表里把状态切到「公开」，否则队伍登录会提示 “You cannot open this contest.”；
+3. 在比赛管理里生成队伍账号，用队伍账号登录比赛提交，确认返回评测结果、榜单正常显示。
+
+## 5. 常用操作
 
 ```bash
-docker logs -f judge-hbcpc
+./csgoj-deploy help                                # 全部参数
+sudo ./csgoj-deploy judge --oj-name <名称> --restart-all   # 重启评测机
+sudo ./csgoj-deploy judge --oj-name <名称> --remove-all    # 删除评测机容器（数据保留）
 ```
 
-评测机文件日志在：
+- **重建评测机**：先 `--remove-all`，再执行一次第 3 节复制得到的命令。
+- **升级 Web**：用新的 `--csgoj-version` 重新执行第 2 节命令。工具发现镜像变了会重建 `php-名称` 容器并刷新静态文件，数据目录不变，数据保留。
+- **升级评测机**：先 `--remove-all`，再把第 3 节命令里的 `--csgoj-version` 换成新版本执行。
+- **增加评测容器**：把 `--pods` 改大后重新执行部署命令，已有容器保留，只补启动缺的。
+- **再开一个站点**：在第 2 节命令里多写一个 `--site 名称2:20081:cpcsys:cpc`（端口在 `--nginx-ranges` 段内）重新执行。
 
-```text
-/csgoj_data/var/log/judger/
-```
+## 6. 常见问题
 
-`OJ_NAME` 不是 `hbcpc` 时，把命令里的 `hbcpc` 换成实际名称。
+**评测机一直不在线**：`sudo docker logs judge-<名称>` 看报错。多数是 `--server-url` 不可达（用了 localhost、端口没放行）或账号口令不对。
 
-## 4. 常用参数
+**端口冲突**：`ss -tuln | grep -E '20080|20050'` 查占用，换端口重新部署。
 
-### 4.1 Web 参数
+**提示内核低于 5.19 / 未启用 cgroup v2**：按 1.1 升级内核并重启。
 
-| 参数 | 说明 | 默认值 |
-| --- | --- | --- |
-| `--PATH_DATA` | 数据目录，必须是绝对路径 | `$(pwd)/data/csgoj_data` |
-| `--OJ_NAME` | OJ 实例名，同时影响容器名 | `ccpc` |
-| `--OJ_MODE` | OJ 模式，比赛系统用 `cpcsys` | `cpcsys` |
-| `--PORT_OJ` | Web 端口 | `20080` |
-| `--PORT_MYADMIN` | phpMyAdmin 端口 | `20050` |
-| `--PORT_DB` | MySQL 映射到宿主机的端口 | `20006` |
-| `--PASS_SQL_ROOT` | MySQL root 密码 | `987654321` |
-| `--PASS_SQL_USER` | MySQL 业务用户密码 | `987654321` |
-| `--PASS_MYADMIN_PAGE` | phpMyAdmin 页面密码 | `987654321` |
-| `--CSGOJ_VERSION` | Docker 镜像版本 | `latest` |
-| `--DOCKER_PULL_NEW` | 是否拉新镜像，断网可设 `0` | `1` |
+**镜像拉取失败**：确认机器能访问 `ccr.ccs.tencentyun.com` 或 Docker Hub；镜像已在本地时工具不会重复拉取。
 
-正式环境不要用默认密码。密码尽量只用数字和英文字母，避免在 shell、配置文件、容器环境变量里被转义。
+**docker 权限错误**：命令前加 `sudo`，或按 1.2 把用户加入 docker 组后重新登录。
 
-### 4.2 Judge 参数
+## 7. 正式上线检查
 
-| 参数 | 说明 | 是否必填 |
-| --- | --- | --- |
-| `--CSGOJ_SERVER_BASE_URL` | Web 地址，评测机容器必须能访问 | 是 |
-| `--CSGOJ_SERVER_USERNAME` | 评测机账号 | 是 |
-| `--CSGOJ_SERVER_PASSWORD` | 评测机密码 | 是 |
-| `--JUDGE_POD_COUNT` | 评测机 pod 数量 | 否，默认 `1` |
-| `--PATH_DATA` | 评测机数据目录 | 否 |
-| `--OJ_NAME` | OJ 实例名 | 否 |
-| `--CPUSET_CPUS` | 强制 CPU 绑核范围 | 否 |
-| `--restart-all` | 重启现有评测机容器 | 否 |
-| `--rebuild-all` | 删除并重建评测机容器，需提供连接参数 | 否 |
-| `--remove-all` / `--delete-all` | 删除评测机容器，不重建 | 否 |
-
-脚本会按机器资源给每个 pod 分配 CPU 和内存。一般每个 pod 大约 4 个逻辑核、4GB 内存、1GB SHM。资源不够时会提示最多能起几个 pod。
-
-## 5. Nginx 额外端口映射
-
-默认只映射 OJ Web 端口和 phpMyAdmin 端口。
-
-要给 Nginx 加自定义端口，用：
-
-```bash
---NGINX_PORT_RANGES="-p 50030-50189:50030-50189"
-```
-
-这个参数会原样传给 Nginx 容器的 `docker run`。设了之后**只使用你写的映射**，OJ 和 phpMyAdmin 端口如果还要保留，得一起写进去：
-
-```bash
---NGINX_PORT_RANGES="-p 20080:20080 -p 20050:20050 -p 50030-50189:50030-50189"
-```
-
-完整示例：
-
-```bash
-bash csgoj_deploy.sh web \
-    --noninteractive \
-    --PATH_DATA=/csgoj_data \
-    --OJ_NAME=hbcpc \
-    --PORT_OJ=20080 \
-    --PORT_MYADMIN=20050 \
-    --NGINX_PORT_RANGES="-p 20080:20080 -p 20050:20050 -p 50030-50189:50030-50189" \
-    --PASS_SQL_ROOT="<MySQL-root-密码>" \
-    --PASS_SQL_USER="<MySQL-业务用户密码>" \
-    --PASS_MYADMIN_PAGE="<phpMyAdmin-页面密码>"
-```
-
-## 6. 配置文件与重复运行
-
-部署完成后配置写在：
-
-```text
-./data/csgoj_config.cfg
-```
-
-再次运行时：
-
-- 不传参数：用已有配置文件
-- 传了命令行参数：命令行覆盖配置文件
-- `--ignore-config`：不用默认配置文件
-- `--CONFIG_FILE=<文件>`：指定另一份配置
-
-优先级：
-
-```text
-命令行参数 > 指定配置文件 > 默认配置文件 > 脚本默认值
-```
-
-实际用过的部署命令和 `./data/csgoj_config.cfg` 留一份，方便以后对照。
-
-## 7. 常用操作
-
-### 7.1 查看帮助
-
-```bash
-bash csgoj_deploy.sh --help
-```
-
-当前 release 的 `--help` 可能只列出评测机相关项。Web 参数以本文和脚本里的默认值为准。
-
-### 7.2 重启评测机
-
-```bash
-bash csgoj_deploy.sh judge --OJ_NAME=hbcpc --restart-all
-```
-
-### 7.3 删除并重建评测机
-
-```bash
-bash csgoj_deploy.sh judge \
-    --OJ_NAME=hbcpc \
-    --PATH_DATA=/csgoj_data \
-    --CSGOJ_SERVER_BASE_URL=http://<Web服务器IP或域名>:20080 \
-    --CSGOJ_SERVER_USERNAME=<评测机账号> \
-    --CSGOJ_SERVER_PASSWORD=<评测机密码> \
-    --rebuild-all
-```
-
-### 7.4 删除评测机容器
-
-```bash
-bash csgoj_deploy.sh judge --OJ_NAME=hbcpc --remove-all
-```
-
-## 8. 常见问题
-
-### 8.1 评测机连不上 Web
-
-先查 `CSGOJ_SERVER_BASE_URL`：
-
-- 不要用 `localhost`
-- 不要用 `127.0.0.1`
-- Web 和 Judge 在同一台机器，也要用服务器内网 IP 或外网 IP
-- 防火墙、安全组、Nginx 端口映射都要放行
-
-### 8.2 端口冲突
-
-看端口是否被占：
-
-```bash
-netstat -tuln | grep 20080
-netstat -tuln | grep 20050
-```
-
-换端口后重新部署 Web：
-
-```bash
-bash csgoj_deploy.sh web \
-    --PATH_DATA=/csgoj_data \
-    --OJ_NAME=hbcpc \
-    --PORT_OJ=8080 \
-    --PORT_MYADMIN=8050
-```
-
-### 8.3 Docker 权限
-
-脚本会尝试把当前用户加入 `docker` 组。如果提示当前终端还不能直接跑 Docker，重新登录一次，或先执行：
-
-```bash
-newgrp docker
-docker ps
-```
-
-### 8.4 镜像拉取失败
-
-确认服务器能访问 Docker 镜像仓库。镜像已经在本地备好时，可以：
-
-```bash
-bash csgoj_deploy.sh web --DOCKER_PULL_NEW=0
-```
-
-Judge 同样：
-
-```bash
-bash csgoj_deploy.sh judge \
-    --CSGOJ_SERVER_BASE_URL=http://<Web服务器IP或域名>:20080 \
-    --CSGOJ_SERVER_USERNAME=<评测机账号> \
-    --CSGOJ_SERVER_PASSWORD=<评测机密码> \
-    --DOCKER_PULL_NEW=0
-```
-
-### 8.5 Judge 提示内核或 memory.peak 不满足
-
-评测机需要 cgroup v2 的内存峰值监控。脚本提示内核过旧、缺少 `memory.peak`、或要求 5.19 以上内核时，先升级内核再重启：
-
-```bash
-sudo apt-get update
-sudo apt-get install -y linux-generic-hwe-22.04
-sudo reboot
-```
-
-## 9. 正式上线检查
-
-- [ ] Web 服务器系统版本、磁盘、网络正常
-- [ ] 数据目录已固定，例如 `/csgoj_data`
-- [ ] `PORT_OJ`、`PORT_MYADMIN`、`PORT_DB` 未被占用
-- [ ] 标准 XCPC 比赛系统已设 `OJ_MODE=cpcsys`
-- [ ] 已改掉默认密码
-- [ ] 首次访问 Web 已设好管理员账号
-- [ ] Web 后台已有评测机账号
-- [ ] Judge 的 `CSGOJ_SERVER_BASE_URL` 不是 `localhost` / `127.0.0.1`
-- [ ] `docker ps` 里 Web 和 Judge 容器都在跑
-- [ ] 提交一道测试题，评测机能取题、编译、运行并回传结果
-- [ ] 已保存部署命令和 `./data/csgoj_config.cfg`
-- [ ] `/csgoj_data` 有备份安排
+- [ ] 数据目录固定（如 `/csgoj_data`），磁盘空间充足，有备份安排
+- [ ] 口令都已自行设置；MySQL 端口未对外开放（`--port-db 0`）
+- [ ] 已设置管理员与评测机账号
+- [ ] 评测机的 `--server-url` 不是 localhost，评测机显示在线
+- [ ] `sudo docker ps` 中 Web 与评测机容器都在运行
+- [ ] 提交一道题能正常返回结果，榜单正常
+- [ ] 保存好本次使用的部署命令（含版本号）
