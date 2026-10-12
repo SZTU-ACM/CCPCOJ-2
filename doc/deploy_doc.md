@@ -12,7 +12,7 @@
 
 | 项目 | 要求 |
 | --- | --- |
-| 系统 | Ubuntu 22.04 / 24.04 / 26.04（x86_64 或 arm64） |
+| 系统 | Ubuntu 22.04 / 24.04 / 26.04（x86_64） |
 | 内核 | 评测机需要 5.19 以上（Ubuntu 24.04 起自带；22.04 见下） |
 | CPU / 内存 | 每个评测容器使用 4 核 4GB（另有 1GB 共享内存）。单机试用 4 核 8GB 起；正式比赛按评测容器数量配机器 |
 | 网络 | 能访问腾讯云镜像仓库或 Docker Hub；评测机要能访问 Web 的地址和端口 |
@@ -38,7 +38,7 @@ sudo docker info
 
 ### 1.3 下载部署工具
 
-到本仓库 [Releases](https://github.com/SZTU-ACM/CCPCOJ-2/releases) 下载对应平台的 `csgoj-deploy`，例如 x86_64 机器：
+到本仓库 [Releases](https://github.com/SZTU-ACM/CCPCOJ-2/releases) 下载 Linux x86_64 的 `csgoj-deploy`：
 
 ```bash
 mkdir -p ~/csgoj && cd ~/csgoj
@@ -48,7 +48,7 @@ chmod +x csgoj-deploy
 ./csgoj-deploy version
 ```
 
-arm64 机器下载 `..._linux_arm64`。无法直接访问 GitHub 时，可在别的电脑下载后用 `scp` 传到服务器。
+无法直接访问 GitHub 时，可在别的电脑下载后用 `scp` 传到服务器。
 
 ### 1.4 镜像从哪里来
 
@@ -104,11 +104,9 @@ http://<服务器IP或域名>:20080
 首次打开页面会进入初始化向导：
 
 1. 设置**系统管理员**账号和口令（用户名 5–20 位字母、数字或下划线），点「初始化系统」，在提示框点「确定」；
-2. 页面跳转到「评测机管理」（之后也可从 管理后台 → 评测机 进入）。在「评测机列表」上方填好评测机口令和账号前缀（如 `judger`），点旁边的添加按钮，列表里会出现新账号（如 `ju01`）。
+2. 页面跳转到「评测机管理」（之后也可从 管理后台 → 评测机 进入）。在「评测机列表」上方填好评测机口令和账号前缀，点旁边的添加按钮，列表里会出现新账号。
 
-后台「用户生成」中创建评测机账号时，可参考：
-
-![评测机账号生成](deploy_doc_image/user_gen_judger.png)
+![评测机管理](deploy_doc_image/judger.png)
 
 ## 3. 部署评测机
 
