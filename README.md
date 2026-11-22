@@ -9,6 +9,7 @@
   <a href="https://github.com/SZTU-ACM/CCPCOJ-2/releases"><img src="https://img.shields.io/github/downloads/SZTU-ACM/CCPCOJ-2/total?style=flat-square&amp;color=151514&amp;label=downloads" alt="Downloads"></a>
   <a href="https://github.com/SZTU-ACM/CCPCOJ-2/stargazers"><img src="https://img.shields.io/github/stars/SZTU-ACM/CCPCOJ-2?style=flat-square&amp;color=151514&amp;label=stars" alt="Stars"></a>
   <a href="doc/deploy_doc.md"><img src="https://img.shields.io/badge/platform-Linux%20x86__64-151514?style=flat-square" alt="Linux x86_64"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Non--Commercial-151514?style=flat-square" alt="License"></a>
 </p>
 
 <p align="center">
@@ -19,6 +20,8 @@
   <a href="doc/user_doc.md">办赛</a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
   <a href="https://github.com/SZTU-ACM/CCPCOJ-2/releases/latest">下载</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="LICENSE">许可</a>
 </p>
 
 <br>
@@ -48,3 +51,7 @@ CCPCOJ 是一套面向 ICPC 与 CCPC 线下及线上标准程序设计竞赛的�
 | 赛后闭幕 | 获奖名单核对与导出、颁奖编排（8 套典礼主题、背景避让区、全屏投屏、内嵌字库离线 HTML 与可编辑 PowerPoint 导出）、经典滚榜与三维 CG 大屏滚榜（含双击防误触、即时撤回与快速跳奖区）、队伍照片管理与双模式离线滚榜包 |
 
 正式开赛前建议将上表三阶段至少完整预演一遍，确认流程和核对细节可查阅 [办赛](doc/user_doc.md)。
+
+## 许可与商业授权
+
+高等院校、非营利教育科研机构及各级学科竞赛（ICPC / CCPC / 省赛 / 邀请赛 / 校赛等）组织方可按 [LICENSE](LICENSE) 免费自建部署与办赛。商业培训、付费题库、SaaS 托管或商业产品集成等商业用途须事先联系 `csgrandeur@gmail.com` 获取书面商业授权。

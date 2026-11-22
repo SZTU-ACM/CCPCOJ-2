@@ -1,0 +1,67 @@
+CCPCOJ 软件与文档使用许可协议
+CCPCOJ Software and Documentation License Agreement
+
+Copyright (c) 2024-2026 CSGrandeur. All rights reserved.
+商业授权与权利人联系邮箱 / Commercial Licensing & Contact: csgrandeur@gmail.com
+官方发布仓库 / Official Repository: https://github.com/SZTU-ACM/CCPCOJ-2
+
+========================================================================
+第一部分 · 中文条款（以中文文本为准）
+========================================================================
+
+1. 定义与适用范围
+   (a) “本软件”指由著作权人（CSGrandeur）发布或经官方渠道提供的 CCPCOJ 系列可执行程序（含部署程序 csgoj-deploy）、Web 与评测容器镜像，以及镜像中包含的全部专有程序与资源文件。
+   (b) “本文档”指随官方发布仓库提供的安装部署文档、办赛使用文档及配图。
+   (c) 下载、安装、复制、部署或以其他方式使用本软件或本文档，即表示您同意受本协议全部条款约束。本协议仅授予有限的使用许可，不转让任何著作权或知识产权，亦不构成开放源代码的承诺。
+
+2. 教育与学科竞赛免费使用许可
+   在严格遵守第 3 条限制的前提下，著作权人授予高等院校、中小学、非营利科研与教育机构，以及经合法授权的各级程序设计竞赛（包括但不限于 ICPC、CCPC、省赛、邀请赛、校赛及同类非营利学科竞赛）组织方一项全球范围内、非排他、不可转让、不可再许可的免费许可：
+   (a) 在其自行管理或租用的服务器环境中下载、部署并运行本软件，用于校内日常教学、程序设计训练及组织上述学科竞赛；
+   (b) 上述学科竞赛组织方按赛事惯例向参赛队伍收取用于覆盖场地、餐饮、物料、奖牌、技术保障等办赛支出的常规参赛报名费，或接受企业赛事赞助并在赛事页面、大屏及榜单中展示赞助商名称与标识，不视为违反本协议的非商业使用限制；
+   (c) 为内部部署、办赛与培训目的复制、参阅本文档，并在完整保留版权声明与出处的条件下转发本文档。
+
+3. 禁止行为与商业用途限制
+   未经著作权人事先书面商业授权（联系邮箱：csgrandeur@gmail.com），任何个人、企业或其他组织均不得实施下列任一行为：
+   (a) 商业培训与付费题库业务：将本软件用于商业培训机构、营利性网课、收费集训营、付费刷题账号或任何面向学员、客户收费的教学培训服务；
+   (b) 商业托管、转售与有偿运维：将本软件、容器镜像或部署程序本身出售、出租、二次打包分发，或基于本软件向第三方提供商业化 SaaS 判题托管、付费赛事平台租赁、有偿代部署或有偿技术运维服务；
+   (c) 商业产品集成：将本软件或其专有组件嵌入商业软件、硬件一体机或其他商业解决方案对外销售或交付；
+   (d) 逆向工程与代码提取：对本软件的可执行程序或容器镜像内的专有程序组件进行反编译、反汇编、逆向工程、解密、还原或提取内部程序逻辑（适用法律明文规定不得通过协议排除的情形除外）；
+   (e) 去除权利标识：删除、遮挡或篡改本软件界面、导出产物、容器镜像或本文档中包含的著作权声明、署名或品牌标识。
+
+4. 第三方开源软件组件豁免
+   随容器镜像或运行环境一并分发的操作系统基础环境及第三方开源软件包，各自适用其原有的开源许可协议。本协议第 3 条的限制仅针对著作权人享有权利的专有软件部分，不限制、亦不减损您在相关第三方开源许可协议项下对该等第三方组件依法享有的权利。
+
+5. 商业授权、版本独立与未来协议变更
+   (a) 如需将本软件用于第 3 条所列情形或第 2 条免费许可范围之外的任何商业用途，须事先通过 csgrandeur@gmail.com 与著作权人签署独立的书面商业许可协议并支付相应费用。
+   (b) 著作权人保留在未来发布的版本中修订本许可条款，或将未来版本的全部或部分内容变更为其他许可协议（包括但不限于标准开源软件许可协议）的权利。各发布版本的许可协议相互独立，未来版本的协议变更不自动溯及此前已发布的任何历史版本或历史镜像。
+   (c) 向官方发布仓库提交文档修订、问题反馈或内容建议的贡献者，即视为授予著作权人一项全球范围内永久、免费、不可撤销、可再许可的权利，使著作权人可在免费版本、商业授权版本或未来开源版本中自由使用与分发该等贡献内容。
+
+6. 免责声明与责任限制
+   本软件与本文档均按“原样（AS IS）”免费提供，不附带任何明示或默示的担保，包括但不限于对适销性、特定用途适用性、不侵权、无缺陷或运行不中断的担保。赛事组织方应在正式开赛前独立完成全流程演练与数据备份。在适用法律允许的最大范围内，著作权人在任何情况下均不对因使用或无法使用本软件所致的任何直接、间接、附带、特殊或后果性损失（包括但不限于数据丢失、比赛中断、评测或排名计算争议及商誉损失）承担赔偿责任。
+
+========================================================================
+Part II · English Summary (Chinese text governs in case of discrepancy)
+========================================================================
+
+1. Scope
+   "The Software" refers to the CCPCOJ executable binaries (including csgoj-deploy), Web and Judge container images, and all proprietary components therein distributed by CSGrandeur ("the Licensor"). "The Documentation" refers to the manuals and images published in https://github.com/SZTU-ACM/CCPCOJ-2. By downloading, deploying, or using the Software or Documentation, you agree to be bound by this Agreement. No source code disclosure is promised, and all intellectual property rights remain exclusively with the Licensor.
+
+2. Free Non-Commercial Grant for Education and Contests
+   Subject to Section 3, the Licensor grants accredited universities, schools, non-profit research/educational institutions, and authorized programming contest committees (including ICPC, CCPC, provincial, invitational, and campus contests) a non-exclusive, non-transferable, royalty-free license to self-host and run the Software for teaching, training, and organizing such programming contests. Collecting customary team registration fees to cover contest operating expenses or displaying event sponsors on contest pages/scoreboards does not violate this non-commercial condition.
+
+3. Prohibited Commercial Uses and Restrictions
+   Without a separate prior written commercial license from the Licensor (csgrandeur@gmail.com), you may NOT:
+   (a) use the Software for commercial training agencies, paid courses, paid training camps, or paid online judge accounts;
+   (b) sell, rent, redistribute, or offer paid SaaS hosting, paid contest-platform rental, or paid deployment/maintenance services based on the Software;
+   (c) bundle or embed the Software into commercial software, hardware appliances, or commercial offerings;
+   (d) reverse-engineer, decompile, disassemble, decrypt, or extract proprietary program components from the binaries or container images, except to the extent such restriction is expressly prohibited by applicable law;
+   (e) remove, obscure, or alter any copyright, attribution, or brand notices in the Software or Documentation.
+
+4. Third-Party Open-Source Carve-Out
+   Operating system packages and third-party open-source libraries included within the container images remain governed by their respective open-source licenses. Nothing in Section 3 restricts your rights under those third-party licenses with respect to such third-party components.
+
+5. Commercial Licensing and Future Relicensing
+   Commercial use requires a separate paid written agreement via csgrandeur@gmail.com. The Licensor reserves the right to modify these terms or relicense future versions (including under standard open-source licenses); any such change applies prospectively only and does not retroactively alter the license of previously released versions or images. Contributors to the public repository grant the Licensor a perpetual, worldwide, royalty-free, sublicensable right to use and distribute their contributions across free, commercial, and future open-source editions.
+
+6. Disclaimer of Warranty and Limitation of Liability
+   THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES, CONTEST INTERRUPTION, DATA LOSS, OR OTHER LIABILITY ARISING FROM OR IN CONNECTION WITH THE SOFTWARE OR DOCUMENTATION.
